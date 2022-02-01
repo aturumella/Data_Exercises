@@ -74,42 +74,194 @@ There are 4110 people named "John" in the dataset.
 5. Show situations where girls were named "John". In which states and years 
 did this happen the most?
 ~~~~ sql
-<INSERT SQL QUERIES HERE>
+SELECT state, sum(frequency) AS sum_freq 
+FROM names 
+WHERE trim(gender) = 'F' AND upper(name) = 'JOHN' 
+GROUP BY state 
+ORDER BY sum(frequency) DESC
+LIMIT 5;
 ~~~~
+| state | sum_freq |
+|-------|----------|
+| CA    | 929      |
+| NY    | 805      |
+| TX    | 618      |
+| PA    | 485      |
+| IL    | 453      |
+
+This shows that assigned girls who were named John happened mostly in CA and NY
+~~~~ sql
+SELECT year, sum(frequency) AS sum_freq 
+FROM names 
+WHERE trim(gender) = 'F' AND upper(name) = 'JOHN' 
+GROUP BY year 
+ORDER BY sum(frequency) DESC
+LIMIT 5;
+~~~~
+| year | sum_freq |
+|------|----------|
+| 1970 | 254      |
+| 1969 | 248      |
+| 1968 | 242      |
+| 1967 | 240      |
+| 1961 | 235      |
+
+This shows that assigned girls who were name John happened mostly in the years 1970 and 1969
 6. What were the top 3 most common female names in New York in the year 2000?
 ~~~~ sql
-<INSERT SQL QUERIES HERE>
+SELECT  name, frequency ,gender, state, year 
+FROM names
+WHERE gender = 'F' AND state='NY' AND year=2000
+ORDER BY frequency DESC
+LIMIT  3;
 ~~~~
+| name     | frequency | gender | state | year |
+|----------|-----------|--------|-------|------|
+| Emily    | 1719      | F      | NY    | 2000 |
+| Samantha | 1422      | F      | NY    | 2000 |
+| Ashley   | 1290      | F      | NY    | 2000 |
+
+Emily,Samantha and Ashley
 ***
 ### Names Table: Aggregations & Operators
 7. How many babies are born each year?
 ~~~~ sql
-<INSERT SQL QUERIES HERE>
+SELECT  year, sum(frequency) as num_babies_born FROM names
+GROUP BY year;
 ~~~~
+| year | num_babies_born |
+|------|-----------------|
+| 1951 | 3507395         |
+| 1952 | 3616498         |
+| 1953 | 3667565         |
+| 1954 | 3791860         |
+| 1955 | 3822067         |
+| 1956 | 3925942         |
+| 1957 | 4002301         |
+| 1958 | 3933841         |
+| 1959 | 3955359         |
+| 1960 | 3948285         |
+| 1961 | 3930176         |
+| 1962 | 3826088         |
+| 1963 | 3747900         |
+| 1964 | 3674959         |
+| 1965 | 3419997         |
+| 1966 | 3268121         |
+| 1967 | 3184524         |
+| 1968 | 3160115         |
+| 1969 | 3245440         |
+| 1970 | 3359904         |
+| 1971 | 3177871         |
+| 1972 | 2890435         |
+| 1973 | 2759591         |
+| 1974 | 2774155         |
+| 1975 | 2744746         |
+| 1976 | 2754165         |
+| 1977 | 2882924         |
+| 1978 | 2877596         |
+| 1979 | 3019009         |
+| 1980 | 3130607         |
+| 1981 | 3146074         |
+| 1982 | 3192940         |
+| 1983 | 3153566         |
+| 1984 | 3176691         |
+| 1985 | 3246156         |
+| 1986 | 3228063         |
+| 1987 | 3266349         |
+| 1988 | 3341106         |
+| 1989 | 3475391         |
+| 1990 | 3566753         |
+| 1991 | 3502904         |
+| 1992 | 3442429         |
+| 1993 | 3364179         |
+| 1994 | 3307545         |
+| 1995 | 3249605         |
+| 1996 | 3225359         |
+| 1997 | 3193607         |
+| 1998 | 3229968         |
+| 1999 | 3233728         |
+| 2000 | 3297484         |
+| 2001 | 3251626         |
+| 2002 | 3238625         |
+| 2003 | 3289668         |
+| 2004 | 3294861         |
+| 2005 | 3306386         |
+| 2006 | 3388984         |
+| 2007 | 3413961         |
+| 2008 | 3342040         |
+| 2009 | 3234208         |
+| 2010 | 3119095         |
+| 2011 | 3082465         |
+| 2012 | 3078459         |
+| 2013 | 3073647         |
+| 2014 | 3134043         |
+| 2015 | 3124166         |
+| 2016 | 3077573         |
+
 8. How many people named "John" were there per state, per year?
 ~~~~ sql
-<INSERT SQL QUERIES HERE>
+--Group by both state and year
+SELECT  year, state , sum(frequency)  as count_john FROM names
+WHERE name='John'
+GROUP BY year, state
+ORDER BY state;
+
+--Group by State alone
+SELECT  state, sum(frequency)  as count_john FROM names
+WHERE name='John'
+GROUP BY state;
+
+-- Group by Year alone
+SELECT  year, sum(frequency) as count_John FROM names
+WHERE name='John'
+GROUP BY year;
 ~~~~
 9. Write a query that tells you how many different female names there 
 were per state, per year.
 ~~~~ sql
-<INSERT SQL QUERIES HERE>
+SELECT state, year, count(DISTINCT(name))
+FROM names
+WHERE gender = 'F'
+GROUP BY state,year ;
 ~~~~
 10. How many records were there in the years 2000, 2001, and 2002?
 ~~~~ sql
-<INSERT SQL QUERIES HERE>
+SELECT  year, count(*) as records 
+FROM names
+GROUP BY year
+HAVING year in (2000,2001,2002);
 ~~~~
+| year | records |
+|------|---------|
+| 2000 | 79998   |
+| 2001 | 81083   |
+| 2002 | 81982   |
+
 11. How many names end with the letter "a" in the table? (Hint: LIKE operator and the % wildcard)
 ~~~~ sql
-<INSERT SQL QUERIES HERE>
+SELECT (count(name)) as names_end_with_a FROM names
+WHERE upper(name) like '%A'
 ~~~~
+Answer is 926,736
 *** 
 ### Regions Table
 12. What are the columns on the region table? (Hint: SELECT * can do the job!)
 ~~~~ sql
-<INSERT SQL QUERIES HERE>
+SELECT * FROM regions;
 ~~~~
+state and region are the two columns of regions table.
 13. How many different regions are there in the `region` table? (Hint: DISTINCT) Can you find the one that looks like a typo?
 ~~~~ sql
-<INSERT SQL QUERIES HERE>
+SELECT DISTINCT(region) FROM regions;
 ~~~~
+| region       |
+|--------------|
+| South        |
+| Pacific      |
+| Mountain     |
+| New_England  |
+| Mid_Atlantic |
+| Midwest      |
+| New England  |
+
+The last region in the above table looks like a typo- 'New England' instead of New_England
